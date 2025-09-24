@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 
 export default function ForgotPassword() {
   const [step, setStep] = useState("email"); // "email" or "otp"
@@ -7,6 +8,7 @@ export default function ForgotPassword() {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const requestOtp = async () => {
@@ -39,10 +41,8 @@ export default function ForgotPassword() {
       const data = await res.json();
       if (res.ok) {
         alert("Password reset successfully!");
-        navigate("/login"); // <- navigate after success
-      } else {
-        alert(data.error || "Failed to reset password");
-      }
+        navigate("/login");
+      } else alert(data.error || "Failed to reset password");
     } catch (err) {
       console.error(err);
       alert("Something went wrong");
@@ -52,55 +52,75 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-200">
-      <div className="card w-full max-w-sm shadow-xl bg-base-100 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-600 to-blue-300 px-4">
+      <div className="w-full max-w-md bg-white dark:bg-gray-900 shadow-xl rounded-2xl p-6 sm:p-8">
         {step === "email" ? (
-          <div className="card-body">
-            <h2 className="card-title justify-center">Forgot Password</h2>
+          <>
+            <h2 className="text-3xl font-bold text-center text-blue-700 dark:text-blue-400 mb-6">
+              Forgot Password
+            </h2>
             <input
               type="email"
               placeholder="Email"
-              className="input input-bordered w-full mb-3"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="w-full input input-bordered bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-lg px-3 py-2 mb-4"
               required
             />
             <button
               onClick={requestOtp}
-              className="btn btn-primary w-full"
               disabled={loading}
+              className="w-full btn btn-primary bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-all duration-200"
             >
               {loading ? "Sending OTP..." : "Send OTP"}
             </button>
-          </div>
+          </>
         ) : (
-          <div className="card-body">
-            <h2 className="card-title justify-center">Reset Password</h2>
+          <>
+            <h2 className="text-3xl font-bold text-center text-blue-700 dark:text-blue-400 mb-6">
+              Reset Password
+            </h2>
             <input
               type="text"
               placeholder="Enter OTP"
-              className="input input-bordered w-full mb-3"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
+              className="w-full input input-bordered bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-lg px-3 py-2 mb-4"
               required
             />
-            <input
-              type="password"
-              placeholder="New Password"
-              className="input input-bordered w-full mb-3"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-            />
+            <div className="relative mb-4">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="New Password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="w-full input input-bordered bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-lg px-3 py-2 pr-10"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-100"
+              >
+                {showPassword ? <EyeIcon className="h-5 w-5" /> : <EyeSlashIcon className="h-5 w-5" />}
+              </button>
+            </div>
             <button
               onClick={resetPassword}
-              className="btn btn-primary w-full"
               disabled={loading}
+              className="w-full btn btn-primary bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-all duration-200"
             >
               {loading ? "Resetting..." : "Reset Password"}
             </button>
-          </div>
+          </>
         )}
+
+        <p
+          className="text-center text-gray-600 dark:text-gray-400 mt-4 cursor-pointer hover:underline"
+          onClick={() => navigate("/login")}
+        >
+          Back to Login
+        </p>
       </div>
     </div>
   );

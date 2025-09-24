@@ -61,26 +61,30 @@ export const getTickets = async (req, res) => {
     const user = req.user;
     let tickets = [];
 
-    if (user.role !== "user") {
-      // Admins and moderators: fetch all tickets
+    if (user.role === "admin") {
+      // Admin: fetch all tickets
       tickets = await Ticket.find({})
         .populate("assignedTo", ["email", "_id"])
         .sort({ createdAt: -1 });
+    } else if (user.role === "moderator") {
+      // Moderator: fetch tickets assigned to them
+      tickets = await Ticket.find({ assignedTo: user._id })
+        .populate("assignedTo", ["email", "_id"])
+        .sort({ createdAt: -1 });
     } else {
-      // Normal users: fetch their own tickets and include assignedTo
+      // User: fetch tickets created by them
       tickets = await Ticket.find({ createdBy: user._id })
-        .populate("assignedTo", ["email", "_id"]) // ✅ Populate assignedTo
-        .select("title description status createdAt assignedTo") // ✅ Include assignedTo
+        .populate("assignedTo", ["email", "_id"])
         .sort({ createdAt: -1 });
     }
 
-    // Return tickets inside an object
     return res.status(200).json({ tickets });
   } catch (error) {
     console.error("Error fetching tickets", error.message);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 
 
 

@@ -1,72 +1,128 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { FaGithub, FaLinkedin, FaEnvelope, FaUserCircle } from "react-icons/fa";
+import profilePic from "../assets/profile.jpg"
+
 
 export default function Navbar() {
-  const token = localStorage.getItem("token");
-  let user = localStorage.getItem("user");
-  if (user) {
-    user = JSON.parse(user);
-  }
-
+  const [showProfileCard, setShowProfileCard] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const logout = () => {
-    localStorage.removeItem("token");
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) setUser(JSON.parse(storedUser));
+    else setUser(null);
+  }, [location]); // update on route change
+
+  const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    setUser(null);
     navigate("/login");
   };
 
   return (
-    <nav className="bg-gradient-to-r from-blue-800 via-blue-700 to-blue-600 bg-opacity-95 text-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
+    <nav className="w-full flex justify-between items-center p-4 bg-gradient-to-r from-blue-600 to-blue-400 shadow-md relative z-10">
+      {/* Left: Logo */}
+      <div className="text-white font-bold text-xl cursor-pointer" onClick={() => navigate("/")}>
+        SmartTix
+      </div>
 
-          {/* Logo aligned to left edge */}
-          <div className="flex-shrink-0">
-            <Link
-              to="/"
-              className="text-2xl font-bold text-white hover:text-blue-300 transition-colors"
+      {/* Right: User section */}
+      <div className="flex items-center space-x-4 relative">
+        {/* Admin Panel Link */}
+        {user?.role === "admin" && (
+          <button
+            onClick={() => navigate("/admin")}
+            className="bg-white text-blue-600 px-3 py-1 rounded-lg hover:bg-gray-100 transition duration-200"
+          >
+            Admin Panel
+          </button>
+        )}
+
+        {user ? (
+          <>
+            <span className="text-white font-medium">Hi, {user.email}</span>
+            <button
+              onClick={handleLogout}
+              className="bg-white text-blue-600 px-3 py-1 rounded-lg hover:bg-gray-100 transition duration-200"
             >
-              SmartTix
-            </Link>
-          </div>
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              className="bg-white text-blue-600 px-3 py-1 rounded-lg hover:bg-gray-100 transition duration-200"
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </button>
+            <button
+              className="bg-white text-blue-600 px-3 py-1 rounded-lg hover:bg-gray-100 transition duration-200"
+              onClick={() => navigate("/signup")}
+            >
+              Signup
+            </button>
+          </>
+        )}
 
-          {/* Menu */}
-          <div className="flex items-center gap-3">
-            {!token ? (
-              <>
-                <Link
-                  to="/signup"
-                  className="px-3 py-1 rounded-md text-sm font-medium bg-blue-500 hover:bg-blue-400 transition-colors"
-                >
-                  Sign Up
-                </Link>
-                <Link
-                  to="/login"
-                  className="px-3 py-1 rounded-md text-sm font-medium bg-blue-500 hover:bg-blue-400 transition-colors"
-                >
-                  Login
-                </Link>
-              </>
-            ) : (
-              <>
-                <span className="text-sm mr-2">Hi, {user?.email}</span>
-                {user?.role === "admin" && (
-                  <Link
-                    to="/admin"
-                    className="px-3 py-1 rounded-md text-sm font-medium bg-blue-600 hover:bg-blue-500 transition-colors"
+        {/* Profile Picture */}
+        <div className="relative">
+          <img
+            src={profilePic}// replace with your image
+            alt="Profile"
+            className="w-10 h-10 rounded-full cursor-pointer border-2 border-white hover:scale-105 transition-transform duration-200"
+            onClick={() => setShowProfileCard(true)}
+          />
+
+          {/* Overlay + Card */}
+          {showProfileCard && (
+            <>
+              {/* Backdrop */}
+              <div
+                className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
+                onClick={() => setShowProfileCard(false)}
+              ></div>
+
+              {/* Card */}
+              <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl animate-fadeInScale">
+                <div className="flex flex-col items-center space-y-4">
+                  <img
+                    src={profilePic}
+                    alt="Profile"
+                    className="w-24 h-24 rounded-full border-2 border-blue-400"
+                  />
+                 <h2 className="text-xl font-bold mb-1 leading-tight">Aniket Gupta</h2>
+                <h4 className="text-sm text-gray-500 leading-tight">Full Stack Developer</h4>
+
+                  <div className="flex space-x-6 text-blue-600 text-2xl">
+                    <a href="https://github.com/yourgithub" target="_blank" rel="noreferrer">
+                      <FaGithub />
+                    </a>
+                    <a href="https://linkedin.com/in/yourlinkedin" target="_blank" rel="noreferrer">
+                      <FaLinkedin />
+                    </a>
+                    <a href="mailto:youremail@example.com" target="_blank" rel="noreferrer">
+                      <FaEnvelope />
+                    </a>
+                    <a href="https://yourportfolio.com" target="_blank" rel="noreferrer">
+                      <FaUserCircle />
+                    </a>
+                  </div>
+                  <button
+                    onClick={() => setShowProfileCard(false)}
+                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition duration-200"
                   >
-                    Admin
-                  </Link>
-                )}
-                <button
-                  onClick={logout}
-                  className="px-3 py-1 rounded-md text-sm font-medium bg-red-600 hover:bg-red-500 transition-colors"
-                >
-                  Logout
-                </button>
-              </>
-            )}
-          </div>
+                    Close
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </nav>
