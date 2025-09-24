@@ -27,7 +27,6 @@ export default function Tickets() {
           );
         }
 
-        // For user, API already returns only their tickets
         setTickets(filtered);
       } else {
         alert(data.message || "Failed to fetch tickets");
@@ -41,7 +40,8 @@ export default function Tickets() {
     fetchTickets();
   }, []);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,7 +49,10 @@ export default function Tickets() {
     try {
       const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/tickets`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(form),
       });
       const data = await res.json();
@@ -62,6 +65,28 @@ export default function Tickets() {
       alert("Error creating ticket");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (ticketId) => {
+    if (!window.confirm("Are you sure you want to delete this ticket?")) return;
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_SERVER_URL}/api/tickets/${ticketId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const data = await res.json();
+      if (res.ok) {
+        fetchTickets();
+      } else {
+        alert(data.message || "Failed to delete ticket");
+      }
+    } catch (err) {
+      console.error("Error deleting ticket:", err);
     }
   };
 
@@ -115,14 +140,18 @@ export default function Tickets() {
                 {ticket.title}
               </h3>
 
-              <p className="text-gray-700 dark:text-gray-200 mt-1">{ticket.description}</p>
+              <p className="text-gray-700 dark:text-gray-200 mt-1">
+                {ticket.description}
+              </p>
 
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
                 Created At: {new Date(ticket.createdAt).toLocaleString()}
               </p>
 
               <p className="text-sm mt-2">
-                <strong className="text-gray-700 dark:text-gray-300">Status:</strong>{" "}
+                <strong className="text-gray-700 dark:text-gray-300">
+                  Status:
+                </strong>{" "}
                 {["moderator", "admin"].includes(role) ? (
                   <select
                     value={ticket.status}
@@ -137,7 +166,10 @@ export default function Tickets() {
                               "Content-Type": "application/json",
                               Authorization: `Bearer ${token}`,
                             },
-                            body: JSON.stringify({ ticketId: ticket._id, status: newStatus }),
+                            body: JSON.stringify({
+                              ticketId: ticket._id,
+                              status: newStatus,
+                            }),
                           }
                         );
                         const data = await res.json();
@@ -154,20 +186,36 @@ export default function Tickets() {
                     <option value="DONE">DONE</option>
                   </select>
                 ) : (
-                  <span className="text-gray-500 dark:text-gray-400">{ticket.status}</span>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    {ticket.status}
+                  </span>
                 )}
               </p>
 
               {ticket.assignedTo?.length > 0 && (
                 <p className="text-sm mt-1">
-                  <strong className="text-gray-700 dark:text-gray-300">Assigned To:</strong>{" "}
+                  <strong className="text-gray-700 dark:text-gray-300">
+                    Assigned To:
+                  </strong>{" "}
                   {ticket.assignedTo.map((mod) => mod.email).join(", ")}
                 </p>
+              )}
+
+              {/* Delete button only for creator or admin */}
+              {(role === "admin" || ticket.createdBy?._id === userId) && (
+                <button
+                  onClick={() => handleDelete(ticket._id)}
+                  className="mt-3 btn btn-error bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg transition-all duration-200"
+                >
+                  Delete
+                </button>
               )}
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-100 dark:text-gray-400">No tickets submitted yet.</p>
+          <p className="text-center text-gray-100 dark:text-gray-400">
+            No tickets submitted yet.
+          </p>
         )}
       </div>
     </div>

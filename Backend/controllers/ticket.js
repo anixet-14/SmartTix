@@ -184,3 +184,30 @@ export const updateTicketStatus = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const deleteTicket = async (req, res) => {
+  try {
+    const user = req.user; // comes from auth middleware
+    const { id } = req.params;
+
+    const ticket = await Ticket.findById(id);
+    if (!ticket) {
+      return res.status(404).json({ message: "Ticket not found" });
+    }
+
+    // 🔐 Permission rules
+    if (
+      user.role === "admin" || // Admin can delete any ticket
+      (user.role === "user" && ticket.createdBy.toString() === user._id.toString()) // User can delete their own
+    ) {
+      await ticket.deleteOne();
+      return res.status(200).json({ message: "Ticket deleted successfully" });
+    }
+
+    // Moderators or unauthorized users
+    return res.status(403).json({ message: "You are not authorized to delete this ticket" });
+  } catch (error) {
+    console.error("Error deleting ticket:", error.message);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
