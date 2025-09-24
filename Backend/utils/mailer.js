@@ -1,19 +1,22 @@
 import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+dotenv.config();
+
+console.log("GMAIL_USER:", process.env.GMAIL_USER);
+console.log("GMAIL_APP_PASSWORD:", process.env.GMAIL_APP_PASSWORD);
 
 export const sendMail = async (to, subject, text) => {
   try {
     const transporter = nodemailer.createTransport({
-      host: process.env.MAILTRAP_SMTP_HOST,
-      port: process.env.MAILTRAP_SMTP_PORT,
-      secure: false, // true for 465, false for other ports
+      service: "gmail",
       auth: {
-        user: process.env.MAILTRAP_SMTP_USER,
-        pass: process.env.MAILTRAP_SMTP_PASS,
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD, // remove spaces
       },
     });
 
     const info = await transporter.sendMail({
-      from: 'Inngest TMS',
+      from: `"Inngest TMS" <${process.env.GMAIL_USER}>`,
       to,
       subject,
       text,

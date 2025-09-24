@@ -2,17 +2,32 @@ import brcypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import { inngest } from "../inngest/client.js";
+import { sendMail } from "../utils/mailer.js"; 
 
 export const signup = async (req, res) => {
   const { email, password, skills = [] } = req.body;
   try {
-    const hashed = await brcypt.hash(password, 10); // ✅ await added
+    const hashed = await brcypt.hash(password, 10); 
     const user = await User.create({ email, password: hashed, skills });
+
+    // Send welcome email (non-blocking)
+    try {
+      await sendMail(
+        user.email,
+        "Welcome to Inngest TMS!",
+        `Hi ${user.email},\n\nThanks for signing up. We're excited to have you onboard!`
+      );
+      console.log("Welcome email sent successfully.");
+    } catch (err) {
+      console.error("Failed to send welcome email:", err.message);
+      // Don't block signup if mail fails
+    }
 
     // JWT
     const token = jwt.sign(
       { _id: user._id, role: user.role },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
     );
 
     res.json({ user, token });

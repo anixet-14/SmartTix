@@ -28,6 +28,9 @@ app.use(
   })
 );
 
+console.log("GMAIL_USER:", process.env.GMAIL_USER);
+console.log("GMAIL_APP_PASSWORD:", process.env.GMAIL_APP_PASSWORD);
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {

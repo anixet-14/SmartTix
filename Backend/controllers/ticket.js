@@ -1,31 +1,52 @@
 import { inngest } from "../inngest/client.js";
 import Ticket from "../models/ticket.js";
+import { sendMail } from "../utils/mailer.js";
 
 export const createTicket = async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, assignedTo } = req.body;
     if (!title || !description) {
-      return res
-        .status(400)
-        .json({ message: "Title and description are required" });
+      return res.status(400).json({ message: "Title and description are required" });
     }
-    const newTicket = Ticket.create({
+
+    const newTicket = await Ticket.create({
       title,
       description,
       createdBy: req.user._id,
+      assignedTo, // array of moderator IDs
     });
 
+    // Send Inngest event
     await inngest.send({
       name: "ticket/created",
       data: {
-        ticketId: (await newTicket)._id.toString(),
+        ticketId: newTicket._id.toString(),
         title,
         description,
         createdBy: req.user._id.toString(),
       },
     });
+
+    // Send email to assigned moderator(s)
+    if (assignedTo && assignedTo.length > 0) {
+      // Fetch moderators’ emails
+      const moderators = await User.find({ _id: { $in: assignedTo } }).select("email");
+      moderators.forEach(async (mod) => {
+        try {
+          await sendMail(
+            mod.email,
+            `New Ticket Assigned: ${title}`,
+            `Hi Moderator,\n\nA new ticket has been assigned to you:\n\nTitle: ${title}\nDescription: ${description}\n\nPlease check the system to take action.`
+          );
+          console.log(`Email sent to ${mod.email}`);
+        } catch (err) {
+          console.error(`Failed to send email to ${mod.email}:`, err.message);
+        }
+      });
+    }
+
     return res.status(201).json({
-      message: "Ticket created and processing started",
+      message: "Ticket created and emails sent to assigned moderators",
       ticket: newTicket,
     });
   } catch (error) {
@@ -33,6 +54,7 @@ export const createTicket = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 
 export const getTickets = async (req, res) => {
   try {
