@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function SignupPage() {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ email: "", password: "", confirmPassword: "" });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -18,10 +18,8 @@ export default function SignupPage() {
         `${import.meta.env.VITE_SERVER_URL}/api/auth/signup`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(form),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: form.email, password: form.password }),
         }
       );
 
@@ -41,6 +39,9 @@ export default function SignupPage() {
       setLoading(false);
     }
   };
+
+  // Check if passwords match
+  const passwordsMatch = form.password && form.password === form.confirmPassword;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-200">
@@ -68,11 +69,25 @@ export default function SignupPage() {
             required
           />
 
+          <input
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            className="input input-bordered"
+            value={form.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+
+          {!passwordsMatch && form.confirmPassword && (
+            <p className="text-red-500 text-sm">Passwords do not match</p>
+          )}
+
           <div className="form-control mt-4">
             <button
               type="submit"
               className="btn btn-primary w-full"
-              disabled={loading}
+              disabled={loading || !passwordsMatch}
             >
               {loading ? "Signing up..." : "Sign Up"}
             </button>
