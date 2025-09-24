@@ -10,6 +10,8 @@ import Login from "./pages/login.jsx";
 import Signup from "./pages/signup.jsx";
 import Admin from "./pages/admin.jsx";
 import Navbar from "./components/navbar.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -37,6 +39,14 @@ createRoot(document.getElementById("root")).render(
           element={
             <CheckAuth protectedRoute={false}>
               <Login />
+            </CheckAuth>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <CheckAuth protectedRoute={false}>
+              <ForgotPassword />
             </CheckAuth>
           }
         />

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid"; // fixed import
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -41,29 +41,29 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-200">
-      <div className="card w-full max-w-sm shadow-xl bg-base-100">
-        <form onSubmit={handleLogin} className="card-body">
-          <h2 className="card-title justify-center">Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 animate-fadeIn">
+        <h2 className="text-3xl font-bold text-indigo-600 text-center mb-6">SmartTix</h2>
 
+        <form onSubmit={handleLogin} className="space-y-4">
           {/* Email */}
           <input
             type="email"
             name="email"
             placeholder="Email"
-            className="input input-bordered w-full mb-3"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 shadow-sm transition duration-200"
             value={form.email}
             onChange={handleChange}
             required
           />
 
           {/* Password */}
-          <div className="relative mb-3">
+          <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
-              className="input input-bordered w-full pr-10"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 shadow-sm pr-10 transition duration-200"
               value={form.password}
               onChange={handleChange}
               required
@@ -71,22 +71,31 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-indigo-600 transition-colors"
             >
               {showPassword ? <EyeIcon className="h-5 w-5" /> : <EyeSlashIcon className="h-5 w-5" />}
             </button>
           </div>
 
-          {/* Submit */}
-          <div className="form-control mt-4">
-            <button
-              type="submit"
-              className="btn btn-primary w-full"
-              disabled={loading}
+          {/* Forgot Password */}
+          <p className="text-sm text-center text-gray-500">
+            Forgot your password?{" "}
+            <span
+              className="text-indigo-600 font-medium cursor-pointer hover:text-indigo-800"
+              onClick={() => navigate("/forgot-password")}
             >
-              {loading ? "Logging in..." : "Login"}
-            </button>
-          </div>
+              Reset here
+            </span>
+          </p>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold transition-all duration-200 shadow-md"
+            disabled={loading}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
         </form>
       </div>
     </div>
