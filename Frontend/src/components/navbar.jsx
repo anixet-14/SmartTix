@@ -113,6 +113,15 @@ export default function Navbar() {
                       <FaUserCircle />
                     </a>
                   </div>
+                  <a
+                    href="https://github.com/anixet-14/SmartTix/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-center mt-3 px-4 py-2 border border-blue-600 rounded-lg text-blue-600 hover:bg-blue-600 hover:text-white transition duration-200 w-full"
+                  >
+                    <FaGithub className="mr-2" />
+                    Project GitHub Repo
+                  </a>
                   <button
                     onClick={() => setShowProfileCard(false)}
                     className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition duration-200"
