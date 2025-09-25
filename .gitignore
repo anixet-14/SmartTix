@@ -1,1 +1,11 @@
+# Backend node modules
+Backend/node_modules/
+
+# Backend environment file
 Backend/.env
+
+# Frontend node modules
+Frontend/node_modules/
+
+# Optional: frontend env file if exists
+Frontend/.env
