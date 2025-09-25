@@ -16,7 +16,7 @@ export const sendMail = async (to, subject, text) => {
     });
 
     const info = await transporter.sendMail({
-      from: `"Inngest TMS" <${process.env.GMAIL_USER}>`,
+      from: `"SmartTix" <${process.env.GMAIL_USER}>`,
       to,
       subject,
       text,

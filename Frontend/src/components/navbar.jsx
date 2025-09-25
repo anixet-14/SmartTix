@@ -100,16 +100,16 @@ export default function Navbar() {
                 <h4 className="text-sm text-gray-500 leading-tight">Full Stack Developer</h4>
 
                   <div className="flex space-x-6 text-blue-600 text-2xl">
-                    <a href="https://github.com/yourgithub" target="_blank" rel="noreferrer">
+                    <a href="https://github.com/anixet-14" target="_blank" rel="noreferrer">
                       <FaGithub />
                     </a>
-                    <a href="https://linkedin.com/in/yourlinkedin" target="_blank" rel="noreferrer">
+                    <a href="https://www.linkedin.com/in/aniket1408/" target="_blank" rel="noreferrer">
                       <FaLinkedin />
                     </a>
-                    <a href="mailto:youremail@example.com" target="_blank" rel="noreferrer">
+                    <a href="mailto:aniket.ag1408@gmail.com" target="_blank" rel="noreferrer">
                       <FaEnvelope />
                     </a>
-                    <a href="https://yourportfolio.com" target="_blank" rel="noreferrer">
+                    <a href="http://anixet14.vercel.app/" target="_blank" rel="noreferrer">
                       <FaUserCircle />
                     </a>
                   </div>
