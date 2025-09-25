@@ -58,6 +58,24 @@ It allows users to create tickets, assign them to moderators, automatically send
 - **Deployment:** Vite
 
 ---
+## Screenshots
+
+### Login
+![Login](Screenshots/Login.png)
+
+### Signup
+[!Signup](Screenshots/Signup.png)
+
+### Home
+[!Home](Screenshots/Home.png)
+
+### Admin Panel
+![Admin Panel](Screenshots/AdminPanel.png)
+
+### Ticket
+![Ticket](Screenshots/Ticket.png)
+
+
 
 ## Installation
 
