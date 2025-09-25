@@ -60,20 +60,20 @@ It allows users to create tickets, assign them to moderators, automatically send
 ---
 ## Screenshots
 
-### Login
-![Login](Screenshots/Login.png)
-
-### Signup
-[!Signup](Screenshots/Signup.png)
+### Login & Signup
+| Login | Signup |
+|-------|--------|
+| ![Login](Screenshots/Login.png) | ![Signup](Screenshots/Signup.png) |
 
 ### Home
-[!Home](Screenshots/Home.png)
+![Home](Screenshots/Home.png)
 
 ### Admin Panel
 ![Admin Panel](Screenshots/AdminPanel.png)
 
 ### Ticket
 ![Ticket](Screenshots/Ticket.png)
+
 
 
 
